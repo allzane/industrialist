@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Industrialist Valve Control Settings Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #1a73e8;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f1f3f4;
+            border-bottom: 1px solid #dadce0;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #5f6368;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            color: #1a73e8;
+            border-bottom-color: #1a73e8;
+            background: white;
+        }
+        
+        .tab:hover {
+            background: #e8f0fe;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .algorithm-section {
+            display: none;
+            margin-bottom: 30px;
+        }
+        
+        .algorithm-section.active {
+            display: block;
+        }
+        
+        .description {
+            background: #e8f0fe;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #1a73e8;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #dadce0;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #3c4043;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #dadce0;
+            margin-top: 20px;
+        }
+        
+        .results h3 {
+            margin-top: 0;
+            color: #1a73e8;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: 500;
+            color: #3c4043;
+        }
+        
+        .result-value {
+            font-family: 'Courier New', monospace;
+            background: #e8f0fe;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #1a73e8;
+            font-weight: bold;
+        }
+        
+        .formula {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #856404;
+        }
+        
+        .machine-input {
+            margin-bottom: 10px;
+        }
+        
+        .add-machine {
+            background: #34a853;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .add-machine:hover {
+            background: #2d8f47;
+        }
+        
+        .remove-machine {
+            background: #ea4335;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .remove-machine:hover {
+            background: #d33b2c;
+        }
+        
+        .machine-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .machine-row input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .diagram {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .diagram h4 {
+            margin-top: 0;
+            color: #1a73e8;
+            font-size: 16px;
+        }
+        
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .component {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 60px;
+        }
+        
+        .source {
+            background: #34a853;
+            color: white;
+        }
+        
+        .splitter {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .machine {
+            background: #1a73e8;
+            color: white;
+        }
+        
+        .arrow {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .branch-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .percentage {
+            background: #ffd54f;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 Roblox Industrialist Valve Control Settings Calculator</h1>
+            <p>Calculate bypass ratios for optimal factory automation in Roblox Industrialist</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showAlgorithm(1)">Algorithm 1</button>
+            <button class="tab" onclick="showAlgorithm(2)">Algorithm 2</button>
+            <button class="tab" onclick="showAlgorithm(3)">Algorithm 3</button>
+        </div>
+        
+        <div class="content">
+            <!-- Algorithm 1 -->
+            <div id="algorithm1" class="algorithm-section active">
+                <div class="description">
+                    <h3>Algorithm 1: Identical Machines, Linear Pipeline</h3>
+                    <p>All machines consume the same amount and are connected in a linear sequence starting from the first machine.</p>
+                    <strong>Formula:</strong> Bypass % = (1 / Number of machines downstream) × 100%
+                </div>
+                
+                <div class="diagram">
+                    <h4>Pipeline Diagram</h4>
+                    <div class="pipeline">
+                        <div class="component source">Source</div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Valve1<br><span class="percentage">20%</span></div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Valve2<br><span class="percentage">25%</span></div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Valve3<br><span class="percentage">33%</span></div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Junction<br><span class="percentage">50%</span></div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Turn<br><span class="percentage">100%</span></div>
+                    </div>
+                    <div class="pipeline" style="margin-top: 20px;">
+                        <div class="component machine">Machine1</div>
+                        <div class="component machine">Machine2</div>
+                        <div class="component machine">Machine3</div>
+                        <div class="component machine">Machine4</div>
+                        <div class="component machine">Machine5</div>
+                    </div>
+                    <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                        Each splitter sends items to its corresponding machine and passes the rest downstream.
+                    </p>
+                </div>
+                
+                <div class="grid">
+                    <div class="input-group">
+                        <label for="machines1">Number of Machines:</label>
+                        <input type="number" id="machines1" value="5" min="1" max="20" oninput="calculateAlgorithm1()">
+                    </div>
+                </div>
+                
+                <div class="results" id="results1">
+                    <h3>Bypass Ratios:</h3>
+                    <div id="results1-content"></div>
+                </div>
+            </div>
+            
+            <!-- Algorithm 2 -->
+            <div id="algorithm2" class="algorithm-section">
+                <div class="description">
+                    <h3>Algorithm 2: Identical Machines, Asymmetric Pipeline</h3>
+                    <p>All machines consume the same amount, but the pipeline doesn't start at the first machine.</p>
+                    <strong>Formula:</strong> Bypass % = (Machines in bypass / Total machines) × 100%
+                </div>
+                
+                <div class="diagram">
+                    <h4>Pipeline Diagram</h4>
+                    <div class="pipeline">
+                        <div class="component source">Source</div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Valve1<br><span class="percentage">37.5%</span></div>
+                    </div>
+                    <div class="pipeline" style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: center; gap: 50px;">
+                            <div class="branch">
+                                <div class="branch-line">
+                                    <div class="component machine">Machine1</div>
+                                    <div class="arrow">→</div>
+                                    <div class="component machine">Machine2</div>
+                                    <div class="arrow">→</div>
+                                    <div class="component machine">Machine3</div>
+                                </div>
+                                <div style="font-size: 12px; color: #666;">Bypass Branch (3 machines)</div>
+                            </div>
+                            <div class="branch">
+                                <div class="branch-line">
+                                    <div class="component machine">Machine4</div>
+                                    <div class="arrow">→</div>
+                                    <div class="component machine">Machine5</div>
+                                    <div class="arrow">→</div>
+                                    <div class="component machine">Machine6</div>
+                                    <div class="arrow">→</div>
+                                    <div class="component machine">Machine7</div>
+                                    <div class="arrow">→</div>
+                                    <div class="component machine">Machine8</div>
+                                </div>
+                                <div style="font-size: 12px; color: #666;">Main Branch (5 machines)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                        Master splitter divides flow based on total machine count in each branch.
+                    </p>
+                </div>
+                
+                <div class="grid">
+                    <div class="input-group">
+                        <label for="total-machines2">Total Machines:</label>
+                        <input type="number" id="total-machines2" value="8" min="1" max="20" oninput="calculateAlgorithm2()">
+                    </div>
+                    <div class="input-group">
+                        <label for="bypass-machines2">Machines in Bypass Branch:</label>
+                        <input type="number" id="bypass-machines2" value="3" min="1" max="20" oninput="calculateAlgorithm2()">
+                    </div>
+                </div>
+                
+                <div class="results" id="results2">
+                    <h3>Master Splitter (C1):</h3>
+                    <div id="results2-content"></div>
+                </div>
+            </div>
+            
+            <!-- Algorithm 3 -->
+            <div id="algorithm3" class="algorithm-section">
+                <div class="description">
+                    <h3>Algorithm 3: Different Consumption Rates</h3>
+                    <p>Machines can have different consumption rates. Works with any pipeline configuration.</p>
+                    <strong>Formula:</strong> Bypass % = (Bypass consumption / Total consumption) × 100%
+                </div>
+                
+                <div class="diagram">
+                    <h4>Pipeline Diagram</h4>
+                    <div class="pipeline">
+                        <div class="component source">Source</div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Valve1<br><span class="percentage">16.7%</span></div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Valve2<br><span class="percentage">20%</span></div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Valve3<br><span class="percentage">75%</span></div>
+                        <div class="arrow">→</div>
+                        <div class="component splitter">Turn<br><span class="percentage">100%</span></div>
+                    </div>
+                    <div class="pipeline" style="margin-top: 20px;">
+                        <div class="component machine">Machine1<br><small>1 i/s</small></div>
+                        <div class="component machine">Machine2<br><small>1 i/s</small></div>
+                        <div class="component machine">Machine3<br><small>3 i/s</small></div>
+                        <div class="component machine">Machine4<br><small>1 i/s</small></div>
+                    </div>
+                    <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                        Each splitter percentage is calculated based on remaining downstream consumption.
+                    </p>
+                </div>
+                
+                <div class="grid">
+                    <div class="input-group">
+                        <label>Machine Consumption Rates (items/s):</label>
+                        <div id="machine-inputs">
+                            <div class="machine-row">
+                                <input type="number" value="1" min="0.1" step="0.1" oninput="calculateAlgorithm3()">
+                                <button class="remove-machine" onclick="removeMachine(this)">Remove</button>
+                            </div>
+                            <div class="machine-row">
+                                <input type="number" value="1" min="0.1" step="0.1" oninput="calculateAlgorithm3()">
+                                <button class="remove-machine" onclick="removeMachine(this)">Remove</button>
+                            </div>
+                            <div class="machine-row">
+                                <input type="number" value="3" min="0.1" step="0.1" oninput="calculateAlgorithm3()">
+                                <button class="remove-machine" onclick="removeMachine(this)">Remove</button>
+                            </div>
+                            <div class="machine-row">
+                                <input type="number" value="1" min="0.1" step="0.1" oninput="calculateAlgorithm3()">
+                                <button class="remove-machine" onclick="removeMachine(this)">Remove</button>
+                            </div>
+                        </div>
+                        <button class="add-machine" onclick="addMachine()">Add Machine</button>
+                    </div>
+                </div>
+                
+                <div class="results" id="results3">
+                    <h3>Valve Control Settings:</h3>
+                    <div id="results3-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showAlgorithm(num) {
+            // Hide all sections
+            document.querySelectorAll('.algorithm-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section and activate tab
+            document.getElementById(`algorithm${num}`).classList.add('active');
+            document.querySelectorAll('.tab')[num - 1].classList.add('active');
+            
+            // Recalculate results
+            if (num === 1) calculateAlgorithm1();
+            if (num === 2) calculateAlgorithm2();
+            if (num === 3) calculateAlgorithm3();
+        }
+        
+        function calculateAlgorithm1() {
+            const machines = parseInt(document.getElementById('machines1').value) || 1;
+            const results = document.getElementById('results1-content');
+            
+            // Update diagram
+            updateDiagram1(machines);
+            
+            let html = '';
+            for (let i = 1; i <= machines; i++) {
+                const remaining = machines - i + 1;
+                let percentage = (1 / remaining * 100).toFixed(3);
+                
+                let label = `Valve ${i} (V${i})`;
+                if (i === machines - 1 && machines >= 2) {
+                    label = `Junction (50%)`;
+                    percentage = '50.000';
+                } else if (i === machines && machines >= 2) {
+                    label = `Turn (100%)`;
+                    percentage = '100.000';
+                }
+                
+                html += `
+                    <div class="result-item">
+                        <span class="result-label">${label}:</span>
+                        <span class="result-value">${percentage}%</span>
+                    </div>
+                `;
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        function updateDiagram1(machines) {
+            const diagram = document.querySelector('#algorithm1 .pipeline');
+            if (!diagram) return;
+            
+            let html = '<div class="component source">Source</div>';
+            
+            for (let i = 1; i <= machines; i++) {
+                const remaining = machines - i + 1;
+                let percentage = (1 / remaining * 100).toFixed(1);
+                let label = `V${i}`;
+                
+                if (i === machines - 1 && machines >= 2) {
+                    label = 'Junction';
+                    percentage = '50.0';
+                } else if (i === machines && machines >= 2) {
+                    label = 'Turn';
+                    percentage = '100.0';
+                }
+                
+                html += `
+                    <div class="arrow">→</div>
+                    <div class="component splitter">${label}<br><span class="percentage">${percentage}%</span></div>
+                `;
+            }
+            
+            diagram.innerHTML = html;
+            
+            // Update machine row
+            const machineRow = document.querySelector('#algorithm1 .pipeline:last-child');
+            if (machineRow) {
+                let machineHtml = '';
+                for (let i = 1; i <= machines; i++) {
+                    machineHtml += `<div class="component machine">Machine${i}</div>`;
+                }
+                machineRow.innerHTML = machineHtml;
+            }
+        }
+        
+        function calculateAlgorithm2() {
+            const totalMachines = parseInt(document.getElementById('total-machines2').value) || 1;
+            const bypassMachines = parseInt(document.getElementById('bypass-machines2').value) || 1;
+            
+            const masterPercentage = (bypassMachines / totalMachines * 100).toFixed(3);
+            
+            // Update diagram
+            updateDiagram2(totalMachines, bypassMachines, masterPercentage);
+            
+            const results = document.getElementById('results2-content');
+            results.innerHTML = `
+                <div class="result-item">
+                    <span class="result-label">Master Splitter Bypass:</span>
+                    <span class="result-value">${masterPercentage}%</span>
+                </div>
+                <div class="formula">
+                    Formula: ${bypassMachines} machines in bypass ÷ ${totalMachines} total machines × 100% = ${masterPercentage}%
+                </div>
+                <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                    <strong>Note:</strong> After the master splitter, use Algorithm 1 for each sub-pipeline.
+                </p>
+            `;
+        }
+        
+        function updateDiagram2(totalMachines, bypassMachines, masterPercentage) {
+            const diagram = document.querySelector('#algorithm2 .diagram');
+            if (!diagram) return;
+            
+            const mainMachines = totalMachines - bypassMachines;
+            
+            diagram.innerHTML = `
+                <h4>Pipeline Diagram</h4>
+                <div class="pipeline">
+                    <div class="component source">Source</div>
+                    <div class="arrow">→</div>
+                    <div class="component splitter">Valve1<br><span class="percentage">${masterPercentage}%</span></div>
+                </div>
+                <div class="pipeline" style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: center; gap: 50px;">
+                        <div class="branch">
+                            <div class="branch-line">
+                                ${Array.from({length: bypassMachines}, (_, i) => 
+                                    `<div class="component machine">Machine${i + 1}</div>${i < bypassMachines - 1 ? '<div class="arrow">→</div>' : ''}`
+                                ).join('')}
+                            </div>
+                            <div style="font-size: 12px; color: #666;">Bypass Branch (${bypassMachines} machines)</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-line">
+                                ${Array.from({length: mainMachines}, (_, i) => 
+                                    `<div class="component machine">Machine${bypassMachines + i + 1}</div>${i < mainMachines - 1 ? '<div class="arrow">→</div>' : ''}`
+                                ).join('')}
+                            </div>
+                            <div style="font-size: 12px; color: #666;">Main Branch (${mainMachines} machines)</div>
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                    Master splitter divides flow based on total machine count in each branch.
+                </p>
+            `;
+        }
+        
+        function calculateAlgorithm3() {
+            const machineInputs = document.querySelectorAll('#machine-inputs input');
+            const consumptionRates = Array.from(machineInputs).map(input => parseFloat(input.value) || 0);
+            
+            const totalConsumption = consumptionRates.reduce((sum, rate) => sum + rate, 0);
+            
+            // Update diagram
+            updateDiagram3(consumptionRates);
+            
+            const results = document.getElementById('results3-content');
+            let html = '';
+            
+            for (let i = 0; i < consumptionRates.length; i++) {
+                const remainingConsumption = consumptionRates.slice(i).reduce((sum, rate) => sum + rate, 0);
+                const bypassConsumption = consumptionRates[i];
+                const percentage = (bypassConsumption / remainingConsumption * 100).toFixed(3);
+                
+                let label = `Valve ${i + 1} (V${i + 1})`;
+                if (i === consumptionRates.length - 2 && consumptionRates.length >= 2) {
+                    label = `Junction (50%)`;
+                } else if (i === consumptionRates.length - 1 && consumptionRates.length >= 2) {
+                    label = `Turn (100%)`;
+                }
+                
+                html += `
+                    <div class="result-item">
+                        <span class="result-label">${label}:</span>
+                        <span class="result-value">${percentage}%</span>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div class="formula">
+                    Total consumption: ${totalConsumption} items/s<br>
+                    Machine rates: [${consumptionRates.join(', ')}] items/s
+                </div>
+            `;
+            
+            results.innerHTML = html;
+        }
+        
+        function updateDiagram3(consumptionRates) {
+            const diagram = document.querySelector('#algorithm3 .diagram');
+            if (!diagram) return;
+            
+            let pipelineHtml = '<div class="component source">Source</div>';
+            
+            for (let i = 0; i < consumptionRates.length; i++) {
+                const remainingConsumption = consumptionRates.slice(i).reduce((sum, rate) => sum + rate, 0);
+                const bypassConsumption = consumptionRates[i];
+                const percentage = (bypassConsumption / remainingConsumption * 100).toFixed(1);
+                
+                let label = `V${i + 1}`;
+                if (i === consumptionRates.length - 2 && consumptionRates.length >= 2) {
+                    label = 'Junction';
+                } else if (i === consumptionRates.length - 1 && consumptionRates.length >= 2) {
+                    label = 'Turn';
+                }
+                
+                pipelineHtml += `
+                    <div class="arrow">→</div>
+                    <div class="component splitter">${label}<br><span class="percentage">${percentage}%</span></div>
+                `;
+            }
+            
+            let machineHtml = '';
+            for (let i = 0; i < consumptionRates.length; i++) {
+                machineHtml += `<div class="component machine">Machine${i + 1}<br><small>${consumptionRates[i]} i/s</small></div>`;
+            }
+            
+            diagram.innerHTML = `
+                <h4>Pipeline Diagram</h4>
+                <div class="pipeline">
+                    ${pipelineHtml}
+                </div>
+                <div class="pipeline" style="margin-top: 20px;">
+                    ${machineHtml}
+                </div>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                    Each splitter percentage is calculated based on remaining downstream consumption.
+                </p>
+            `;
+        }
+        
+        function addMachine() {
+            const container = document.getElementById('machine-inputs');
+            const newRow = document.createElement('div');
+            newRow.className = 'machine-row';
+            newRow.innerHTML = `
+                <input type="number" value="1" min="0.1" step="0.1" oninput="calculateAlgorithm3()">
+                <button class="remove-machine" onclick="removeMachine(this)">Remove</button>
+            `;
+            container.appendChild(newRow);
+            calculateAlgorithm3();
+        }
+        
+        function removeMachine(button) {
+            const rows = document.querySelectorAll('.machine-row');
+            if (rows.length > 1) {
+                button.parentElement.remove();
+                calculateAlgorithm3();
+            }
+        }
+        
+        // Initialize calculations
+        calculateAlgorithm1();
+        calculateAlgorithm2();
+        calculateAlgorithm3();
+    </script>
+</body>
+</html>
